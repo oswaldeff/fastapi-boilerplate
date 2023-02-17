@@ -1,4 +1,6 @@
 
+from datetime import datetime
+
 from fastapi import FastAPI
 from fastapi.responses import JSONResponse
 
@@ -23,6 +25,14 @@ app = FastAPI(
     license_info=None,
 )
 
-@app.get("/")
-async def root():
-    return {"message": "Hello World"}
+@app.on_event("startup")
+async def startup_event():
+    datetime_now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    with open("server_log.txt", mode="a") as log: # 로그이외의 다른 알림형태로 대체
+        log.write(f"\n Application startup, {datetime_now}")
+
+@app.on_event("shutdown")
+async def shutdown_event():
+    datetime_now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    with open("server_log.txt", mode="a") as log: # 로그이외의 다른 알림형태로 대체
+        log.write(f"\n Application shutdown, {datetime_now}")
