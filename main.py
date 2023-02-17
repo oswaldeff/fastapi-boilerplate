@@ -4,6 +4,8 @@ from datetime import datetime
 from fastapi import FastAPI
 from fastapi.responses import JSONResponse
 
+from auth import routers as auth_routers
+
 # FastAPI APP
 app = FastAPI(
     debug=True,
@@ -24,6 +26,8 @@ app = FastAPI(
     },
     license_info=None,
 )
+
+app.include_router(auth_routers.APIs)
 
 @app.on_event("startup")
 async def startup_event():
