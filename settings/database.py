@@ -19,18 +19,23 @@ class SQLAlchemy:
             pool_recycle=900, # for lost connection, must be less than wait_timeout(default 30sec)
             pool_pre_ping=True # for disconnect handling
         )
-        self.session = sessionmaker(autocommit=False, autoflush=False, bind=self.engine)
-        self.base = declarative_base()
+        self.SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=self.engine)
 
-async def session():
-    
-    try:
-        db = SQLAlchemy()
-        db_session = db.session
-        yield db_session
+    async def connect_session(self):
 
-    except Exception as e:
-        db_session.rollback()
+        try:
+            db_session = self.SessionLocal()
+            yield db_session
+
+        except Exception as e:
+            db_session.rollback()
+
+        finally:
+            db_session.close()
     
-    finally:
-        db_session.close()
+    @property
+    def session(self):
+        return self.connect_session
+
+db_orm = SQLAlchemy()
+Base = declarative_base()
