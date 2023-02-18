@@ -3,6 +3,7 @@ from pydantic import BaseModel
 
 class User(BaseModel):
     id: str
+    phone: str = "01000000000"
     naver_id: str | None = None
     kakao_id: str | None = None
     apple_id: str | None = None
